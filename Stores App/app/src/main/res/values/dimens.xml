@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="item_card_height">200dp</dimen>
+    <dimen name="minimum_gap">8dp</dimen>
+    <dimen name="default_gap">16dp</dimen>
+</resources>
