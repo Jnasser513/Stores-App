@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.nasser.storesapp.classes.Store
+import com.nasser.storesapp.data.entities.Store
 import com.nasser.storesapp.databinding.ItemStoreBinding
 
 class StoreAdapter(private var storeList: MutableList<Store>, private var listener: OnClickListener):
@@ -34,6 +34,10 @@ class StoreAdapter(private var storeList: MutableList<Store>, private var listen
     }
 
     override fun getItemCount(): Int = storeList.size
+    fun add(store: Store) {
+        storeList.add(store)
+        notifyDataSetChanged()
+    }
 
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val binding = ItemStoreBinding.bind(view)
