@@ -1,7 +1,7 @@
 package com.nasser.storesapp.data.dao
 
 import androidx.room.*
-import com.nasser.storesapp.data.entities.Store
+import com.nasser.storesapp.data.entity.Store
 
 @Dao
 interface StoreDao {
@@ -20,5 +20,5 @@ interface StoreDao {
 
     //Obtener una tienda
     @Query("SELECT * FROM store_table WHERE id = :query")
-    suspend fun searchUser(query: Long): Store
+    abstract fun searchStore(query: Long): Store
 }

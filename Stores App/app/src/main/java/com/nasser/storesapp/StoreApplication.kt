@@ -15,7 +15,7 @@ class StoreApplication: Application() {
         database = Room.databaseBuilder(
             this,
             StoreDatabase::class.java,
-            "Store_db"
+            "StoreDatabase"
         ).build()
     }
 }

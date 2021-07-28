@@ -3,8 +3,10 @@ package com.nasser.storesapp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.GridLayoutManager
-import com.nasser.storesapp.data.entities.Store
+import com.nasser.storesapp.data.entity.Store
 import com.nasser.storesapp.databinding.ActivityMainBinding
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 class MainActivity : AppCompatActivity(), OnClickListener {
 
@@ -20,6 +22,10 @@ class MainActivity : AppCompatActivity(), OnClickListener {
 
         mBinding.actionSave.setOnClickListener {
             val store = Store(name = mBinding.textInputName.text.toString().trim())
+
+            Thread{
+                StoreApplication.database.storeDao().insertOrUpdateStore(store)
+            }.start()
             mAdapter.add(store)
         }
 
@@ -30,6 +36,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
     private fun setupRecyclerView() {
         mAdapter = StoreAdapter(mutableListOf(), this)
         mGridLayout = GridLayoutManager(this, 2)
+        getStores()
 
         mBinding.recyclerview.apply {
             setHasFixedSize(true)
@@ -38,8 +45,27 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         }
     }
 
+    private fun getStores() {
+        doAsync {
+            val stores = StoreApplication.database.storeDao().getAllStores()
+            uiThread {
+                mAdapter.setStores(stores)
+            }
+        }
+    }
+
     //OnClickListener
     override fun onClick(store: Store) {
 
+    }
+
+    override fun favoriteStore(store: Store) {
+        store.isFavorite = !store.isFavorite
+        doAsync {
+            StoreApplication.database.storeDao().insertOrUpdateStore(store)
+            uiThread {
+                mAdapter.update(store)
+            }
+        }
     }
 }

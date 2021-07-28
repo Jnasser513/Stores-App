@@ -3,6 +3,7 @@ buildscript {
     ext{
         kotlin_version = "1.5.10"
         room_version = "2.3.0"
+        anko_version= "0.10.8"
     }
     repositories {
         google()

@@ -1,4 +1,4 @@
-package com.nasser.storesapp.data.entities
+package com.nasser.storesapp.data.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class Store(
     @PrimaryKey(autoGenerate = true) var id: Long = 0,
     var name: String,
-    var phone: String = "",
-    var website: String = "",
+    var phone: String ="",
+    var website: String ="",
     var isFavorite: Boolean = false
 )

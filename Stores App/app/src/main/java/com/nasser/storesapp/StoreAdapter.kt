@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.nasser.storesapp.data.entities.Store
+import com.nasser.storesapp.data.entity.Store
 import com.nasser.storesapp.databinding.ItemStoreBinding
 
 class StoreAdapter(private var storeList: MutableList<Store>, private var listener: OnClickListener):
@@ -30,13 +30,28 @@ class StoreAdapter(private var storeList: MutableList<Store>, private var listen
             setListener(store)
 
             binding.textViewTittle.text = store.name
+            binding.checkboxFavorite.isChecked = store.isFavorite
         }
     }
 
     override fun getItemCount(): Int = storeList.size
+
+    fun setStores(stores: MutableList<Store>) {
+        this.storeList = stores
+        notifyDataSetChanged()
+    }
+
     fun add(store: Store) {
         storeList.add(store)
         notifyDataSetChanged()
+    }
+
+    fun update(store: Store) {
+        val index = storeList.indexOf(store)
+        if(index != -1){
+            storeList.set(index, store)
+            notifyItemChanged(index)
+        }
     }
 
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
@@ -45,6 +60,10 @@ class StoreAdapter(private var storeList: MutableList<Store>, private var listen
         fun setListener(store: Store){
             binding.root.setOnClickListener {
                 listener.onClick(store)
+            }
+
+            binding.checkboxFavorite.setOnClickListener {
+                listener.favoriteStore(store)
             }
         }
     }
