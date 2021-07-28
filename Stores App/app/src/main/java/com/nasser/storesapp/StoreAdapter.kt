@@ -54,12 +54,27 @@ class StoreAdapter(private var storeList: MutableList<Store>, private var listen
         }
     }
 
+    fun delete(store: Store) {
+        val index = storeList.indexOf(store)
+        if(index != -1) {
+            storeList.removeAt(index)
+            notifyItemRemoved(index)
+        }
+    }
+
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val binding = ItemStoreBinding.bind(view)
 
         fun setListener(store: Store){
-            binding.root.setOnClickListener {
-                listener.onClick(store)
+            with(binding.root){
+                setOnClickListener {
+                    listener.onClick(store)
+                }
+
+                setOnLongClickListener {
+                    listener.deleteStore(store)
+                    true
+                }
             }
 
             binding.checkboxFavorite.setOnClickListener {
