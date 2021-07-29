@@ -12,7 +12,7 @@ interface StoreDao {
 
     //Insertar o actualizar tienda
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertOrUpdateStore(store: Store)
+    fun insertOrUpdateStore(store: Store): Long
 
     //Borrar una tienda
     @Delete

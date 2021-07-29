@@ -109,4 +109,12 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
             mBinding.fav.hide()
         }
     }
+
+    override fun addStore(store: Store) {
+        mAdapter.add(store)
+    }
+
+    override fun updateStore(store: Store) {
+
+    }
 }

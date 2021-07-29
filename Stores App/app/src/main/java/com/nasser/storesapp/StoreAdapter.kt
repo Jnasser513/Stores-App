@@ -42,8 +42,10 @@ class StoreAdapter(private var storeList: MutableList<Store>, private var listen
     }
 
     fun add(store: Store) {
-        storeList.add(store)
-        notifyDataSetChanged()
+        if(!storeList.contains(store)) {
+            storeList.add(store)
+            notifyItemInserted(storeList.size-1)
+        }
     }
 
     fun update(store: Store) {
