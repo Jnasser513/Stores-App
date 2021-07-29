@@ -5,10 +5,11 @@ import android.os.Bundle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.nasser.storesapp.data.entity.Store
 import com.nasser.storesapp.databinding.ActivityMainBinding
+import com.nasser.storesapp.fragment.EditStoreFragment
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
-class MainActivity : AppCompatActivity(), OnClickListener {
+class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
 
     private lateinit var mBinding: ActivityMainBinding
 
@@ -20,16 +21,33 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
 
-        mBinding.actionSave.setOnClickListener {
+        /*mBinding.actionSave.setOnClickListener {
             val store = Store(name = mBinding.textInputName.text.toString().trim())
 
             Thread{
                 StoreApplication.database.storeDao().insertOrUpdateStore(store)
             }.start()
             mAdapter.add(store)
-        }
+        }*/
+
+        mBinding.fav.setOnClickListener { launchEditFragment() }
 
         setupRecyclerView()
+    }
+
+    //Lanzando el fragmento de crear tienda
+    private fun launchEditFragment() {
+        val fragment = EditStoreFragment()
+
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+
+        fragmentTransaction.add(R.id.container_main, fragment)
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.commit()
+
+        hideFab()
+        //mBinding.fav.hide()
     }
 
     //Configuracion del recyclerview
@@ -54,7 +72,9 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         }
     }
 
-    //OnClickListener
+    /*
+    * OnClickListener
+    * */
     override fun onClick(store: Store) {
 
     }
@@ -75,6 +95,18 @@ class MainActivity : AppCompatActivity(), OnClickListener {
             uiThread {
                 mAdapter.delete(store)
             }
+        }
+    }
+
+    /*
+    * MainAux
+    * */
+
+    override fun hideFab(isVisible: Boolean) {
+        if(isVisible){
+            mBinding.fav.show()
+        } else{
+            mBinding.fav.hide()
         }
     }
 }
