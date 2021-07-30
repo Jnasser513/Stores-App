@@ -10,6 +10,10 @@ interface StoreDao {
     @Query("SELECT * FROM store_table")
     fun getAllStores(): MutableList<Store>
 
+    //Obetener una tienda por id
+    @Query("SELECT * FROM store_table WHERE id = :id")
+    fun getStoreById(id: Long): Store
+
     //Insertar o actualizar tienda
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertOrUpdateStore(store: Store): Long
@@ -17,8 +21,4 @@ interface StoreDao {
     //Borrar una tienda
     @Delete
     fun deleteStore(store: Store)
-
-    //Obtener una tienda
-    @Query("SELECT * FROM store_table WHERE id = :query")
-    abstract fun searchStore(query: Long): Store
 }

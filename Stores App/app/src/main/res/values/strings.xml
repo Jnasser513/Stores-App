@@ -13,4 +13,5 @@
     <string name="menu_save">Save</string>
     <string name="edit_store_message_save_succes">Tienda agregada correctamente</string>
     <string name="arg_id">hey id</string>
+    <string name="edit_store_message_update_succes">La tienda ha sido actualizada</string>
 </resources>

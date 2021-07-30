@@ -119,6 +119,6 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
     }
 
     override fun updateStore(store: Store) {
-
+        mAdapter.update(store)
     }
 }

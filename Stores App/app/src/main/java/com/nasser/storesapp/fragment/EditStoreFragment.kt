@@ -2,6 +2,7 @@ package com.nasser.storesapp.fragment
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -22,6 +23,10 @@ class EditStoreFragment : Fragment() {
 
     private lateinit var mBinding: FragmentEditStoreBinding
     private var mActivity: MainActivity? = null
+    //Variable para saber si estamos en modo edicion
+    private var mIsEditMode: Boolean = false
+    //Recibe los parametros de la tienda que se esta consultando
+    private var mStore: Store? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,9 +42,11 @@ class EditStoreFragment : Fragment() {
 
         val id = arguments?.getLong(getString(R.string.arg_id), 0)
         if(id != null && id != 0L){
-            Toast.makeText(requireContext(), id.toString(), Toast.LENGTH_SHORT).show()
+            mIsEditMode = true
+            getStore(id)
         } else{
-            Toast.makeText(requireContext(), id.toString(), Toast.LENGTH_SHORT).show()
+            mIsEditMode = false
+            mStore = Store(name = "", phone = "", photoUrl = "")
         }
 
         mActivity = activity as? MainActivity
@@ -60,6 +67,27 @@ class EditStoreFragment : Fragment() {
         }
     }
 
+    private fun getStore(id: Long) {
+        doAsync {
+            mStore = StoreApplication.database.storeDao().getStoreById(id)
+            uiThread {
+                if(mStore != null) setUiStore(mStore!!)
+            }
+        }
+    }
+
+    private fun setUiStore(store: Store) {
+        with(mBinding){
+            //2 formas para llamar al argumento, con setText o a traves de la funciona editable
+            nameEditTextInput.setText(store.name)
+            phoneEditTextInput.text = store.phone.editable()
+            websiteEditTextInput.text = store.website.editable()
+            photoUrlEditText.text = store.photoUrl.editable()
+        }
+    }
+
+    private fun String.editable(): Editable = Editable.Factory.getInstance().newEditable(this)
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         //Inflamos la vista del menu
         inflater.inflate(R.menu.menu_save, menu)
@@ -76,22 +104,45 @@ class EditStoreFragment : Fragment() {
                 true
             }
             R.id.action_save -> {
-                val store = Store(name = mBinding.nameEditTextInput.text.toString().trim(),
+                if(mStore != null) {
+                    /*val store = Store(name = mBinding.nameEditTextInput.text.toString().trim(),
                     phone = mBinding.phoneEditTextInput.text.toString().trim(),
                     website = mBinding.websiteEditTextInput.text.toString().trim(),
-                    photoUrl = mBinding.photoUrlEditText.text.toString().trim())
+                    photoUrl = mBinding.photoUrlEditText.text.toString().trim())*/
+                    with(mStore!!){
+                        name = mBinding.nameEditTextInput.text.toString().trim()
+                        phone = mBinding.phoneEditTextInput.text.toString().trim()
+                        website = mBinding.websiteEditTextInput.text.toString().trim()
+                        photoUrl = mBinding.photoUrlEditText.text.toString().trim()
+                    }
 
-                doAsync {
-                    //Inserta el elemento a la base de datos y nos devuelve su id
-                    store.id = StoreApplication.database.storeDao().insertOrUpdateStore(store)
-                    uiThread {
-                        mActivity?.addStore(store)
+                    doAsync {
+                        if(mIsEditMode){
+                            StoreApplication.database.storeDao().insertOrUpdateStore(mStore!!)
+                        } else {
+                            //Inserta el elemento a la base de datos y nos devuelve su id
+                            mStore!!.id = StoreApplication.database.storeDao().insertOrUpdateStore(mStore!!)
+                        }
+                        uiThread {
 
-                        //Oculta el teclado cuando se presiona el boton de action bar para agregar tienda
-                        Toast.makeText(mActivity, R.string.edit_store_message_save_succes, Toast.LENGTH_SHORT)
-                            .show()
-                        mActivity?.onBackPressed()
-                        hideKeyboard()
+                            hideKeyboard()
+
+                            if(mIsEditMode){
+                                mActivity?.updateStore(mStore!!)
+                                Snackbar.make(mBinding.root,
+                                    R.string.edit_store_message_update_succes,
+                                    Snackbar.LENGTH_SHORT).show()
+                            } else {
+
+                                mActivity?.addStore(mStore!!)
+
+                                //Oculta el teclado cuando se presiona el boton de action bar para agregar tienda
+                                Toast.makeText(mActivity,
+                                    R.string.edit_store_message_save_succes,
+                                    Toast.LENGTH_SHORT).show()
+                                mActivity?.onBackPressed()
+                            }
+                        }
                     }
                 }
                 true
