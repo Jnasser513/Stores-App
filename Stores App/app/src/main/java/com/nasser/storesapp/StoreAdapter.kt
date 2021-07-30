@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.nasser.storesapp.data.entity.Store
 import com.nasser.storesapp.databinding.ItemStoreBinding
 
@@ -31,6 +33,12 @@ class StoreAdapter(private var storeList: MutableList<Store>, private var listen
 
             binding.textViewTittle.text = store.name
             binding.checkboxFavorite.isChecked = store.isFavorite
+
+            Glide.with(mContext)
+                .load(store.photoUrl)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop()
+                .into(binding.itemImgPhoto)
         }
     }
 
@@ -70,7 +78,7 @@ class StoreAdapter(private var storeList: MutableList<Store>, private var listen
         fun setListener(store: Store){
             with(binding.root){
                 setOnClickListener {
-                    listener.onClick(store)
+                    listener.onClick(store.id)
                 }
 
                 setOnLongClickListener {

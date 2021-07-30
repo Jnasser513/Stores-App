@@ -4,7 +4,11 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.snackbar.Snackbar
 import com.nasser.storesapp.MainActivity
 import com.nasser.storesapp.R
@@ -31,6 +35,13 @@ class EditStoreFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val id = arguments?.getLong(getString(R.string.arg_id), 0)
+        if(id != null && id != 0L){
+            Toast.makeText(requireContext(), id.toString(), Toast.LENGTH_SHORT).show()
+        } else{
+            Toast.makeText(requireContext(), id.toString(), Toast.LENGTH_SHORT).show()
+        }
+
         mActivity = activity as? MainActivity
         //Flecha de retroceso en la Action bar
         mActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -39,6 +50,14 @@ class EditStoreFragment : Fragment() {
 
         //Toma el control del menu
         setHasOptionsMenu(true)
+
+        mBinding.photoUrlEditText.addTextChangedListener {
+            Glide.with(this)
+                .load(mBinding.photoUrlEditText.text.toString())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop()
+                .into(mBinding.imgPhoto)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -59,7 +78,8 @@ class EditStoreFragment : Fragment() {
             R.id.action_save -> {
                 val store = Store(name = mBinding.nameEditTextInput.text.toString().trim(),
                     phone = mBinding.phoneEditTextInput.text.toString().trim(),
-                    website = mBinding.websiteEditTextInput.text.toString().trim())
+                    website = mBinding.websiteEditTextInput.text.toString().trim(),
+                    photoUrl = mBinding.photoUrlEditText.text.toString().trim())
 
                 doAsync {
                     //Inserta el elemento a la base de datos y nos devuelve su id
@@ -68,11 +88,10 @@ class EditStoreFragment : Fragment() {
                         mActivity?.addStore(store)
 
                         //Oculta el teclado cuando se presiona el boton de action bar para agregar tienda
-                        hideKeyboard()
-                        Snackbar.make(mBinding.root, getString(R.string.edit_store_message_save_succes),
-                            Snackbar.LENGTH_SHORT)
+                        Toast.makeText(mActivity, R.string.edit_store_message_save_succes, Toast.LENGTH_SHORT)
                             .show()
                         mActivity?.onBackPressed()
+                        hideKeyboard()
                     }
                 }
                 true
