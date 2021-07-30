@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
 import com.nasser.storesapp.MainActivity
 import com.nasser.storesapp.R
 import com.nasser.storesapp.StoreApplication
@@ -104,7 +105,8 @@ class EditStoreFragment : Fragment() {
                 true
             }
             R.id.action_save -> {
-                if(mStore != null) {
+                if(mStore != null &&
+                    validateFields(mBinding.photoUrlTextInputLayout, mBinding.phoneTextInputLayout, mBinding.nameTextInputLayout)) {
                     /*val store = Store(name = mBinding.nameEditTextInput.text.toString().trim(),
                     phone = mBinding.phoneEditTextInput.text.toString().trim(),
                     website = mBinding.websiteEditTextInput.text.toString().trim(),
@@ -149,6 +151,46 @@ class EditStoreFragment : Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun validateFields(vararg textFields: TextInputLayout): Boolean {
+        var isValid = true
+
+        for (textField in textFields) {
+            if(textField.editText?.text.toString().trim().isEmpty()){
+                textField.error = getString(R.string.helper_require)
+                textField.editText?.requestFocus()
+                isValid = false
+            }
+        }
+
+        if(!isValid) Toast.makeText(requireContext(), R.string.missing_data, Toast.LENGTH_SHORT).show()
+
+        return isValid
+    }
+
+    private fun validateFields(): Boolean {
+        var isValid = true
+
+        if(mBinding.photoUrlEditText.text.toString().trim().isEmpty()){
+            mBinding.photoUrlTextInputLayout.error = getString(R.string.helper_require)
+            mBinding.photoUrlEditText.requestFocus()
+            isValid = false
+        }
+
+        if(mBinding.phoneEditTextInput.text.toString().trim().isEmpty()){
+            mBinding.phoneTextInputLayout.error = getString(R.string.helper_require)
+            mBinding.phoneEditTextInput.requestFocus()
+            isValid = false
+        }
+
+        if(mBinding.nameEditTextInput.text.toString().trim().isEmpty()){
+            mBinding.nameTextInputLayout.error = getString(R.string.helper_require)
+            mBinding.nameEditTextInput.requestFocus()
+            isValid = false
+        }
+
+        return isValid
     }
 
     //Funcion para ocultar el teclado
