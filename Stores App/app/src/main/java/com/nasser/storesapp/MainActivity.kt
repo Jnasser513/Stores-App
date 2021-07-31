@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -140,8 +141,10 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
     private fun goWebsite(website: String) {
         if(website.isEmpty()) {
             Toast.makeText(this, R.string.no_website_message, Toast.LENGTH_SHORT).show()
-        } else {
+        } else if (URLUtil.isValidUrl(website)){
             startActivity(Intent(Intent.ACTION_VIEW).setData(Uri.parse(website)))
+        } else {
+            Toast.makeText(this, R.string.invalid_url, Toast.LENGTH_SHORT).show()
         }
     }
 
