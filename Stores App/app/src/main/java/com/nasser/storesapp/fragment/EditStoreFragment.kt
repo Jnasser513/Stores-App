@@ -50,22 +50,48 @@ class EditStoreFragment : Fragment() {
             mStore = Store(name = "", phone = "", photoUrl = "")
         }
 
+        setupActionBar()
+        setupTextFields()
+    }
+
+    private fun setupActionBar() {
         mActivity = activity as? MainActivity
         //Flecha de retroceso en la Action bar
         mActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        //Cambio de titulo de la action bar
-        mActivity?.supportActionBar?.title = getString(R.string.edit_store_tittle_add)
+        //Cambio de titulo de la action bar dependiendo si esta creando tienda o actualizando
+        mActivity?.supportActionBar?.title = if(mIsEditMode) getString(R.string.edit_store_tittle)
+        else getString(R.string.create_store_tittle_add)
 
         //Toma el control del menu
         setHasOptionsMenu(true)
+    }
 
+    private fun setupTextFields() {
         mBinding.photoUrlEditText.addTextChangedListener {
-            Glide.with(this)
-                .load(mBinding.photoUrlEditText.text.toString())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .centerCrop()
-                .into(mBinding.imgPhoto)
         }
+
+        with(mBinding){
+            photoUrlEditText.addTextChangedListener {
+                validateFields(photoUrlTextInputLayout)
+                loadImage(it.toString().trim())
+            }
+
+            phoneEditTextInput.addTextChangedListener {
+                validateFields(phoneTextInputLayout)
+            }
+
+            nameEditTextInput.addTextChangedListener {
+                validateFields(nameTextInputLayout)
+            }
+        }
+    }
+
+    private fun loadImage(url: String){
+        Glide.with(this)
+            .load(url)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .centerCrop()
+            .into(mBinding.imgPhoto)
     }
 
     private fun getStore(id: Long) {
@@ -157,10 +183,14 @@ class EditStoreFragment : Fragment() {
         var isValid = true
 
         for (textField in textFields) {
+            //Si esta vacio marca error
             if(textField.editText?.text.toString().trim().isEmpty()){
                 textField.error = getString(R.string.helper_require)
                 textField.editText?.requestFocus()
                 isValid = false
+            }
+            else {
+                textField.error = null
             }
         }
 

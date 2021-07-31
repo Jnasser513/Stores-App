@@ -1,12 +1,18 @@
 package com.nasser.storesapp
 
+import android.content.DialogInterface
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.nasser.storesapp.data.entity.Store
 import com.nasser.storesapp.databinding.ActivityMainBinding
 import com.nasser.storesapp.fragment.EditStoreFragment
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 
 class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
@@ -76,6 +82,8 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
     /*
     * OnClickListener
     * */
+
+    //Metodo que envia a editar tienda
     override fun onClick(storeId: Long) {
         val args = Bundle()
         args.putLong(getString(R.string.arg_id), storeId)
@@ -83,22 +91,57 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
         launchEditFragment(args)
     }
 
+    //Metodo para poner o eliminar el favorito de una tienda
     override fun favoriteStore(store: Store) {
         store.isFavorite = !store.isFavorite
         doAsync {
             StoreApplication.database.storeDao().insertOrUpdateStore(store)
             uiThread {
-                mAdapter.update(store)
+                updateStore(store)
             }
         }
     }
 
+    //Metodo para eliminar tienda
     override fun deleteStore(store: Store) {
-        doAsync {
-            StoreApplication.database.storeDao().deleteStore(store)
-            uiThread {
-                mAdapter.delete(store)
+        val item = arrayOf("Eliminar", "Llamar", "Ir al sitio web")
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.dialog_options_tittle)
+            .setItems(item) { dialog, which ->
+                when(which){
+                    0 -> confirmDelete(store)
+                    1 -> goPhone(store.phone)
+                    2 -> goWebsite(store.website)
+
+            }}
+            .show()
+    }
+
+    private fun confirmDelete(store: Store){
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.dialog_delete_tittle)
+            .setPositiveButton(R.string.dialog_delete_confirm) { dialog, which ->
+                doAsync {
+                    StoreApplication.database.storeDao().deleteStore(store)
+                    uiThread {
+                        mAdapter.delete(store)
+                    }
+                }
             }
+            .setNegativeButton(R.string.dialog_delete_cancel, null)
+            .show()
+    }
+
+    private fun goPhone(phone: String) {
+        startActivity(Intent(Intent.ACTION_DIAL).setData(Uri.parse("tel: $phone")))
+    }
+
+    private fun goWebsite(website: String) {
+        if(website.isEmpty()) {
+            Toast.makeText(this, R.string.no_website_message, Toast.LENGTH_SHORT).show()
+        } else {
+            startActivity(Intent(Intent.ACTION_VIEW).setData(Uri.parse(website)))
         }
     }
 
@@ -106,6 +149,7 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
     * MainAux
     * */
 
+    //Metodo para mostrar si es favorito o no
     override fun hideFab(isVisible: Boolean) {
         if(isVisible){
             mBinding.fav.show()
@@ -114,10 +158,12 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
         }
     }
 
+    //Metodo para agregar tienda al recyclerview
     override fun addStore(store: Store) {
         mAdapter.add(store)
     }
 
+    //Metodo para actualizar los datos del recyclerview
     override fun updateStore(store: Store) {
         mAdapter.update(store)
     }
