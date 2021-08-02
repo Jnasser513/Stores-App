@@ -135,14 +135,30 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
     }
 
     private fun goPhone(phone: String) {
-        startActivity(Intent(Intent.ACTION_DIAL).setData(Uri.parse("tel: $phone")))
+        val callIntent = Intent().apply {
+            action = Intent.ACTION_DIAL
+            data = Uri.parse("tel: $phone")
+        }
+        if(callIntent.resolveActivity(packageManager) != null){
+            startActivity(callIntent)
+        } else {
+            Toast.makeText(this, R.string.main_error_no_resolve, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun goWebsite(website: String) {
         if(website.isEmpty()) {
             Toast.makeText(this, R.string.no_website_message, Toast.LENGTH_SHORT).show()
         } else if (URLUtil.isValidUrl(website)){
-            startActivity(Intent(Intent.ACTION_VIEW).setData(Uri.parse(website)))
+            val websiteIntent = Intent(). apply {
+                action = Intent.ACTION_VIEW
+                data = Uri.parse(website)
+            }
+            if(websiteIntent.resolveActivity(packageManager) != null){
+                startActivity(websiteIntent)
+            } else {
+                Toast.makeText(this, R.string.main_error_no_resolve, Toast.LENGTH_SHORT).show()
+            }
         } else {
             Toast.makeText(this, R.string.invalid_url, Toast.LENGTH_SHORT).show()
         }
