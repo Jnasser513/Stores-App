@@ -103,9 +103,9 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
         }
     }
 
-    //Metodo para eliminar tienda
+    //Metodo que muestra el menu de la tienda
     override fun deleteStore(store: Store) {
-        val item = arrayOf("Eliminar", "Llamar", "Ir al sitio web")
+        val item = resources.getStringArray(R.array.array_options_item)
 
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.dialog_options_tittle)
@@ -134,18 +134,16 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
             .show()
     }
 
+    //Metodo para lanzar el telefono
     private fun goPhone(phone: String) {
         val callIntent = Intent().apply {
             action = Intent.ACTION_DIAL
             data = Uri.parse("tel: $phone")
         }
-        if(callIntent.resolveActivity(packageManager) != null){
-            startActivity(callIntent)
-        } else {
-            Toast.makeText(this, R.string.main_error_no_resolve, Toast.LENGTH_SHORT).show()
-        }
+        startIntent(callIntent)
     }
 
+    //Metodo para lanzar el sitio web de la tienda
     private fun goWebsite(website: String) {
         if(website.isEmpty()) {
             Toast.makeText(this, R.string.no_website_message, Toast.LENGTH_SHORT).show()
@@ -154,13 +152,18 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
                 action = Intent.ACTION_VIEW
                 data = Uri.parse(website)
             }
-            if(websiteIntent.resolveActivity(packageManager) != null){
-                startActivity(websiteIntent)
-            } else {
-                Toast.makeText(this, R.string.main_error_no_resolve, Toast.LENGTH_SHORT).show()
-            }
+            startIntent(websiteIntent)
         } else {
             Toast.makeText(this, R.string.invalid_url, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    //Metodo para lanzar el intent
+    private fun startIntent(intent: Intent) {
+        if(intent.resolveActivity(packageManager) != null){
+            startActivity(intent)
+        } else {
+            Toast.makeText(this, R.string.main_error_no_resolve, Toast.LENGTH_SHORT).show()
         }
     }
 

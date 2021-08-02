@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Stores App</string>
+    <string name="description_img_photo">Imagen de la tienda</string>
+    <string name="store_add">Crear tienda</string>
+    <string name="hint_name">Nombre de la tienda</string>
+    <string name="helper_require">Requerido</string>
+    <string name="hint_phone">Telefono</string>
+    <string name="hint_website">Url del sitio web</string>
+    <string name="hint_photo_url">Url de la imagen</string>
+    <string name="create_store_tittle_add">Crear tienda</string>
+    <string name="menu_save">Guardar</string>
+    <string name="edit_store_message_save_succes">Tienda agregada correctamente</string>
+    <string name="edit_store_message_update_succes">La tienda ha sido actualizada</string>
+    <string name="missing_data">Faltan espacios por rellenar</string>
+    <string name="edit_store_tittle">Actualizando tienda</string>
+    <string name="dialog_delete_tittle">Eliminar tienda?</string>
+    <string name="dialog_delete_confirm">Eliminar</string>
+    <string name="dialog_delete_cancel">Cancelar</string>
+    <string name="dialog_options_tittle">Que desea hacer?</string>
+    <string name="no_website_message">Esta tienda no tiene sitio web</string>
+    <string name="invalid_url">La url del sitio web no es valida</string>
+    <string name="main_error_no_resolve">No se encontro ninguna app compatible</string>
+    <string name="call_option_menu">Llamar</string>
+    <string name="website_option_menu">Ir al sitio web</string>
+</resources>
