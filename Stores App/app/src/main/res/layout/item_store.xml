@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/item_card_height"
-    android:layout_marginHorizontal="@dimen/minimum_gap"
+    android:layout_marginStart="@dimen/minimum_gap"
     android:layout_marginTop="@dimen/minimum_gap">
 
     <androidx.constraintlayout.widget.ConstraintLayout
